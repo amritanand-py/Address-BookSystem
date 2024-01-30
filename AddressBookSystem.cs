@@ -20,23 +20,63 @@ namespace addressBooksystem
 
             AddressBook addressBook = new AddressBook();
 
-            // Getting contact details from the user
-            ContactPerson newContact = GetContactDetailsFromUser();
+            // menu
+            bool exit = false;
+            while (!exit)
+            {
+                DisplayMenu();
+                Console.Write("Enter your choice (1-5): ");
+                string choice = Console.ReadLine();
 
-            // Adding the new contact to the address book
-            addressBook.AddContact(newContact);
+                switch (choice)
+                {
+                    case "1":
+                        
+                        ContactPerson newContact = GetContactDetailsFromUser();
+                        addressBook.AddContact(newContact);
+                        Console.WriteLine("Contact Added:");
+                        addressBook.DisplayContact(newContact);
+                        break;
 
-            Console.WriteLine("Contact Added:");
-            addressBook.DisplayContact(newContact);
+                    case "2":
+                       
+                        EditExistingContact(addressBook);
+                        break;
 
-            // Editing an existing contact
-            EditExistingContact(addressBook);
+                    case "3":
+                        
+                        DeletePerson(addressBook);
+                        break;
 
-            // Deleting a person from the address book
-            DeletePerson(addressBook);
+                    case "4":
+                        
+                        Console.WriteLine("\nAll Contacts in Address Book:");
+                        addressBook.DisplayAllContacts();
+                        break;
+
+                    case "5":
+                        
+                        exit = true;
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid choice. Please enter a valid option (1-5).");
+                        break;
+                }
+            }
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
+        }
+
+        private static void DisplayMenu()
+        {
+            Console.WriteLine("\nMenu Options:");
+            Console.WriteLine("1. Create a new contact");
+            Console.WriteLine("2. Edit an existing contact");
+            Console.WriteLine("3. Delete a contact");
+            Console.WriteLine("4. Display all contacts");
+            Console.WriteLine("5. Exit");
         }
 
         private static ContactPerson GetContactDetailsFromUser()
@@ -86,19 +126,19 @@ namespace addressBooksystem
             Console.Write("Enter the Last Name of the contact to edit: ");
             string editLastName = Console.ReadLine();
 
-            // Find the contact in the address book
+            
             ContactPerson existingContact = addressBook.FindContact(editFirstName, editLastName);
 
             if (existingContact != null)
             {
-                // Display existing contact details
+                
                 Console.WriteLine("\nExisting Contact Details:");
                 addressBook.DisplayContact(existingContact);
 
-                // Get updated details from the user
+                
                 ContactPerson updatedContact = GetContactDetailsFromUser();
 
-                // Update the existing contact
+                
                 existingContact.UpdateContact(updatedContact);
 
                 Console.WriteLine("Contact Updated:");
@@ -118,16 +158,16 @@ namespace addressBooksystem
             Console.Write("Enter the Last Name of the contact to delete: ");
             string deleteLastName = Console.ReadLine();
 
-            // Find the contact in the address book
+            
             ContactPerson contactToDelete = addressBook.FindContact(deleteFirstName, deleteLastName);
 
             if (contactToDelete != null)
             {
-                // Display contact details before deletion
+                
                 Console.WriteLine("\nContact Details before Deletion:");
                 addressBook.DisplayContact(contactToDelete);
 
-                // Delete the contact
+                
                 addressBook.DeleteContact(contactToDelete);
 
                 Console.WriteLine("Contact Deleted.");
@@ -141,16 +181,64 @@ namespace addressBooksystem
 
     class ContactPerson
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Address { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public string Zip { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Email { get; set; }
+        private string _firstName;
+        private string _lastName;
+        private string _address;
+        private string _city;
+        private string _state;
+        private string _zip;
+        private string _phoneNumber;
+        private string _email;
 
-        // Method to update contact details
+        public string FirstName
+        {
+            get { return _firstName; }
+            set { _firstName = value; }
+        }
+
+        public string LastName
+        {
+            get { return _lastName; }
+            set { _lastName = value; }
+        }
+
+        public string Address
+        {
+            get { return _address; }
+            set { _address = value; }
+        }
+
+        public string City
+        {
+            get { return _city; }
+            set { _city = value; }
+        }
+
+        public string State
+        {
+            get { return _state; }
+            set { _state = value; }
+        }
+
+        public string Zip
+        {
+            get { return _zip; }
+            set { _zip = value; }
+        }
+
+        public string PhoneNumber
+        {
+            get { return _phoneNumber; }
+            set { _phoneNumber = value; }
+        }
+
+        public string Email
+        {
+            get { return _email; }
+            set { _email = value; }
+        }
+
+       
         public void UpdateContact(ContactPerson updatedContact)
         {
             Address = updatedContact.Address;
@@ -161,7 +249,6 @@ namespace addressBooksystem
             Email = updatedContact.Email;
         }
     }
-
 
     class AddressBook
     {
@@ -186,7 +273,7 @@ namespace addressBooksystem
             Console.WriteLine();
         }
 
-        // Method to find a contact by name
+        
         public ContactPerson FindContact(string firstName, string lastName)
         {
             return contacts.Find(c =>
@@ -194,15 +281,26 @@ namespace addressBooksystem
                 string.Equals(c.LastName, lastName, StringComparison.OrdinalIgnoreCase));
         }
 
-        // Method to delete a contact
+        
         public void DeleteContact(ContactPerson contact)
         {
             contacts.Remove(contact);
         }
+
+        
+        public void DisplayAllContacts()
+        {
+            foreach (var contact in contacts)
+            {
+                DisplayContact(contact);
+            }
+        }
     }
+
+    //Console.WriteLine();
 }
 
-//Console.WriteLine();
+
 
 
 
