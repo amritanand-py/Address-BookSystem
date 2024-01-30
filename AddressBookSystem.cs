@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,19 +9,38 @@ namespace addressBooksystem
 {
     internal class Program
     {
-
-         static void welcome()
+        private static void Welcome()
         {
             Console.WriteLine("Welcome to Address Book");
         }
-        static void Main(string[] args)
 
+        static void Main(string[] args)
         {
-            welcome();  // welcome note
+            Welcome();  // welcome note
 
             AddressBook addressBook = new AddressBook();
 
-            // Use Console to get details for a new contact
+            // Getting contact details from the user
+            ContactPerson newContact = GetContactDetailsFromUser();
+
+            // Adding the new contact to the address book
+            addressBook.AddContact(newContact);
+
+            Console.WriteLine("Contact Added:");
+            addressBook.DisplayContact(newContact);
+
+            // Editing an existing contact
+            EditExistingContact(addressBook);
+
+            // Deleting a person from the address book
+            DeletePerson(addressBook);
+
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
+        }
+
+        private static ContactPerson GetContactDetailsFromUser()
+        {
             Console.Write("Enter First Name: ");
             string firstName = Console.ReadLine();
 
@@ -45,8 +65,7 @@ namespace addressBooksystem
             Console.Write("Enter Email: ");
             string email = Console.ReadLine();
 
-            // Create a new contact using the entered details
-            ContactPerson newContact = new ContactPerson
+            return new ContactPerson
             {
                 FirstName = firstName,
                 LastName = lastName,
@@ -57,17 +76,66 @@ namespace addressBooksystem
                 PhoneNumber = phoneNumber,
                 Email = email
             };
+        }
 
-            // Add the new contact to the address book
-            addressBook.AddContact(newContact);
+        private static void EditExistingContact(AddressBook addressBook)
+        {
+            Console.Write("Enter the First Name of the contact to edit: ");
+            string editFirstName = Console.ReadLine();
 
-            // Display the added contact
-            Console.WriteLine("Contact Added:");
-            addressBook.DisplayContact(newContact);
+            Console.Write("Enter the Last Name of the contact to edit: ");
+            string editLastName = Console.ReadLine();
 
-            // For simplicity, let's just pause the console application
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
+            // Find the contact in the address book
+            ContactPerson existingContact = addressBook.FindContact(editFirstName, editLastName);
+
+            if (existingContact != null)
+            {
+                // Display existing contact details
+                Console.WriteLine("\nExisting Contact Details:");
+                addressBook.DisplayContact(existingContact);
+
+                // Get updated details from the user
+                ContactPerson updatedContact = GetContactDetailsFromUser();
+
+                // Update the existing contact
+                existingContact.UpdateContact(updatedContact);
+
+                Console.WriteLine("Contact Updated:");
+                addressBook.DisplayContact(existingContact);
+            }
+            else
+            {
+                Console.WriteLine("Contact not found. Unable to edit.");
+            }
+        }
+
+        private static void DeletePerson(AddressBook addressBook)
+        {
+            Console.Write("Enter the First Name of the contact to delete: ");
+            string deleteFirstName = Console.ReadLine();
+
+            Console.Write("Enter the Last Name of the contact to delete: ");
+            string deleteLastName = Console.ReadLine();
+
+            // Find the contact in the address book
+            ContactPerson contactToDelete = addressBook.FindContact(deleteFirstName, deleteLastName);
+
+            if (contactToDelete != null)
+            {
+                // Display contact details before deletion
+                Console.WriteLine("\nContact Details before Deletion:");
+                addressBook.DisplayContact(contactToDelete);
+
+                // Delete the contact
+                addressBook.DeleteContact(contactToDelete);
+
+                Console.WriteLine("Contact Deleted.");
+            }
+            else
+            {
+                Console.WriteLine("Contact not found. Unable to delete.");
+            }
         }
     }
 
@@ -81,7 +149,19 @@ namespace addressBooksystem
         public string Zip { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
+
+        // Method to update contact details
+        public void UpdateContact(ContactPerson updatedContact)
+        {
+            Address = updatedContact.Address;
+            City = updatedContact.City;
+            State = updatedContact.State;
+            Zip = updatedContact.Zip;
+            PhoneNumber = updatedContact.PhoneNumber;
+            Email = updatedContact.Email;
+        }
     }
+
 
     class AddressBook
     {
@@ -103,11 +183,27 @@ namespace addressBooksystem
             Console.WriteLine($"Address: {contact.Address}, {contact.City}, {contact.State} {contact.Zip}");
             Console.WriteLine($"Phone Number: {contact.PhoneNumber}");
             Console.WriteLine($"Email: {contact.Email}");
+            Console.WriteLine();
+        }
+
+        // Method to find a contact by name
+        public ContactPerson FindContact(string firstName, string lastName)
+        {
+            return contacts.Find(c =>
+                string.Equals(c.FirstName, firstName, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(c.LastName, lastName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // Method to delete a contact
+        public void DeleteContact(ContactPerson contact)
+        {
+            contacts.Remove(contact);
         }
     }
-
-    //Console.WriteLine();
 }
+
+//Console.WriteLine();
+
 
 
 
