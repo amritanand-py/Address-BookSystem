@@ -11,56 +11,47 @@ namespace addressBooksystem
     {
         private static void Welcome()
         {
-            Console.WriteLine("Welcome to Address Book");
+            Console.WriteLine("Welcome to Address Book System");
         }
 
         static void Main(string[] args)
         {
             Welcome();  // welcome note
 
-            AddressBook addressBook = new AddressBook();
+            Dictionary<string, AddressBook> addressBooks = new Dictionary<string, AddressBook>();
 
-            // menu
+            // Loop to show menu options
             bool exit = false;
             while (!exit)
             {
-                DisplayMenu();
-                Console.Write("Enter your choice (1-5): ");
+                DisplayMainMenu();
+                Console.Write("Enter your choice (1-4): ");
                 string choice = Console.ReadLine();
 
                 switch (choice)
                 {
                     case "1":
-                        
-                        ContactPerson newContact = GetContactDetailsFromUser();
-                        addressBook.AddContact(newContact);
-                        Console.WriteLine("Contact Added:");
-                        addressBook.DisplayContact(newContact);
+                        // Add a new address book
+                        AddNewAddressBook(addressBooks);
                         break;
 
                     case "2":
-                       
-                        EditExistingContact(addressBook);
+                        // Operate on an existing address book
+                        OperateOnAddressBook(addressBooks);
                         break;
 
                     case "3":
-                        
-                        DeletePerson(addressBook);
+                        // Display all address books
+                        DisplayAllAddressBooks(addressBooks);
                         break;
 
                     case "4":
-                        
-                        Console.WriteLine("\nAll Contacts in Address Book:");
-                        addressBook.DisplayAllContacts();
-                        break;
-
-                    case "5":
-                        
+                        // Exit the program
                         exit = true;
                         break;
 
                     default:
-                        Console.WriteLine("Invalid choice. Please enter a valid option (1-5).");
+                        Console.WriteLine("Invalid choice. Please enter a valid option (1-4).");
                         break;
                 }
             }
@@ -69,20 +60,117 @@ namespace addressBooksystem
             Console.ReadKey();
         }
 
-        private static void DisplayMenu()
+        private static void DisplayMainMenu()
         {
-            Console.WriteLine("\nMenu Options:");
+            Console.WriteLine("\nMain Menu:");
+            Console.WriteLine("1. Add a new address book");
+            Console.WriteLine("2. Operate on an existing address book");
+            Console.WriteLine("3. Display all address books");
+            Console.WriteLine("4. Exit");
+        }
+
+        private static void AddNewAddressBook(Dictionary<string, AddressBook> addressBooks)
+        {
+            Console.Write("Enter the name of the new address book: ");
+            string newBookName = Console.ReadLine();
+
+            if (!addressBooks.ContainsKey(newBookName))
+            {
+                AddressBook newAddressBook = new AddressBook();
+                addressBooks.Add(newBookName, newAddressBook);
+                Console.WriteLine($"Address Book '{newBookName}' added successfully.");
+            }
+            else
+            {
+                Console.WriteLine($"Address Book with the name '{newBookName}' already exists.");
+            }
+        }
+
+        private static void OperateOnAddressBook(Dictionary<string, AddressBook> addressBooks)
+        {
+            Console.Write("Enter the name of the address book: ");
+            string bookName = Console.ReadLine();
+
+            if (addressBooks.TryGetValue(bookName, out AddressBook selectedAddressBook))
+            {
+                // Operate on the selected address book
+                bool exitAddressBook = false;
+                while (!exitAddressBook)
+                {
+                    DisplayAddressBookMenu(bookName);
+                    Console.Write($"Enter your choice for '{bookName}' Address Book (1-4): ");
+                    string choice = Console.ReadLine();
+
+                    switch (choice)
+                    {
+                        case "1":
+                            // Create a new contact in the selected address book
+                            CreateNewContact(selectedAddressBook);
+                            break;
+
+                        case "2":
+                            // Edit an existing contact
+                            EditExistingContact(selectedAddressBook);
+                            break;
+
+                        case "3":
+                            // Display all contacts in the address book
+                            Console.WriteLine($"\nAll Contacts in '{bookName}' Address Book:");
+                            selectedAddressBook.DisplayAllContacts();
+                            break;
+
+                        case "4":
+                            // Exit the address book menu
+                            exitAddressBook = true;
+                            break;
+
+                        default:
+                            Console.WriteLine("Invalid choice. Please enter a valid option (1-4).");
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Address Book with the name '{bookName}' not found.");
+            }
+        }
+
+        private static void DisplayAddressBookMenu(string bookName)
+        {
+            Console.WriteLine($"\nAddress Book Menu for '{bookName}':");
             Console.WriteLine("1. Create a new contact");
             Console.WriteLine("2. Edit an existing contact");
-            Console.WriteLine("3. Delete a contact");
-            Console.WriteLine("4. Display all contacts");
-            Console.WriteLine("5. Exit");
+            Console.WriteLine("3. Display all contacts");
+            Console.WriteLine("4. Exit");
+        }
+
+        private static void DisplayAllAddressBooks(Dictionary<string, AddressBook> addressBooks)
+        {
+            Console.WriteLine("\nAll Address Books:");
+            foreach (var bookName in addressBooks.Keys)
+            {
+                Console.WriteLine($"- {bookName}");
+            }
+        }
+
+        private static void CreateNewContact(AddressBook addressBook)
+        {
+            // Getting contact details from the user
+            ContactPerson newContact = GetContactDetailsFromUser();
+
+            // Adding the new contact to the address book
+            addressBook.AddContact(newContact);
+
+            Console.WriteLine("Contact Added:");
+            addressBook.DisplayContact(newContact);
         }
 
         private static ContactPerson GetContactDetailsFromUser()
         {
             Console.Write("Enter First Name: ");
             string firstName = Console.ReadLine();
+
 
             Console.Write("Enter Last Name: ");
             string lastName = Console.ReadLine();
@@ -126,19 +214,19 @@ namespace addressBooksystem
             Console.Write("Enter the Last Name of the contact to edit: ");
             string editLastName = Console.ReadLine();
 
-            
+            // Find the contact in the address book
             ContactPerson existingContact = addressBook.FindContact(editFirstName, editLastName);
 
             if (existingContact != null)
             {
-                
+                // Display existing contact details
                 Console.WriteLine("\nExisting Contact Details:");
                 addressBook.DisplayContact(existingContact);
 
-                
+                // Get updated details from the user
                 ContactPerson updatedContact = GetContactDetailsFromUser();
 
-                
+                // Update the existing contact
                 existingContact.UpdateContact(updatedContact);
 
                 Console.WriteLine("Contact Updated:");
@@ -149,98 +237,23 @@ namespace addressBooksystem
                 Console.WriteLine("Contact not found. Unable to edit.");
             }
         }
-
-        private static void DeletePerson(AddressBook addressBook)
-        {
-            Console.Write("Enter the First Name of the contact to delete: ");
-            string deleteFirstName = Console.ReadLine();
-
-            Console.Write("Enter the Last Name of the contact to delete: ");
-            string deleteLastName = Console.ReadLine();
-
-            
-            ContactPerson contactToDelete = addressBook.FindContact(deleteFirstName, deleteLastName);
-
-            if (contactToDelete != null)
-            {
-                
-                Console.WriteLine("\nContact Details before Deletion:");
-                addressBook.DisplayContact(contactToDelete);
-
-                
-                addressBook.DeleteContact(contactToDelete);
-
-                Console.WriteLine("Contact Deleted.");
-            }
-            else
-            {
-                Console.WriteLine("Contact not found. Unable to delete.");
-            }
-        }
     }
 
     class ContactPerson
     {
-        private string _firstName;
-        private string _lastName;
-        private string _address;
-        private string _city;
-        private string _state;
-        private string _zip;
-        private string _phoneNumber;
-        private string _email;
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Zip { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Email { get; set; }
 
-        public string FirstName
-        {
-            get { return _firstName; }
-            set { _firstName = value; }
-        }
-
-        public string LastName
-        {
-            get { return _lastName; }
-            set { _lastName = value; }
-        }
-
-        public string Address
-        {
-            get { return _address; }
-            set { _address = value; }
-        }
-
-        public string City
-        {
-            get { return _city; }
-            set { _city = value; }
-        }
-
-        public string State
-        {
-            get { return _state; }
-            set { _state = value; }
-        }
-
-        public string Zip
-        {
-            get { return _zip; }
-            set { _zip = value; }
-        }
-
-        public string PhoneNumber
-        {
-            get { return _phoneNumber; }
-            set { _phoneNumber = value; }
-        }
-
-        public string Email
-        {
-            get { return _email; }
-            set { _email = value; }
-        }
-
-       
         public void UpdateContact(ContactPerson updatedContact)
         {
+            FirstName = updatedContact.FirstName;
+            LastName = updatedContact.LastName;
             Address = updatedContact.Address;
             City = updatedContact.City;
             State = updatedContact.State;
@@ -273,7 +286,6 @@ namespace addressBooksystem
             Console.WriteLine();
         }
 
-        
         public ContactPerson FindContact(string firstName, string lastName)
         {
             return contacts.Find(c =>
@@ -281,13 +293,6 @@ namespace addressBooksystem
                 string.Equals(c.LastName, lastName, StringComparison.OrdinalIgnoreCase));
         }
 
-        
-        public void DeleteContact(ContactPerson contact)
-        {
-            contacts.Remove(contact);
-        }
-
-        
         public void DisplayAllContacts()
         {
             foreach (var contact in contacts)
@@ -296,12 +301,4 @@ namespace addressBooksystem
             }
         }
     }
-
-    //Console.WriteLine();
 }
-
-
-
-
-
-
