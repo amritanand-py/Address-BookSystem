@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+
 namespace addressBooksystem
 {
     internal class Program
@@ -15,27 +16,6 @@ namespace addressBooksystem
             Console.WriteLine("Welcome to Address Book System");
         }
 
-
-        public static class Validator
-        {
-            public static bool IsValidEmail(string email)
-            {
-                string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-                return Regex.IsMatch(email, pattern);
-            }
-
-            public static bool IsValidZipCode(string zipCode)
-            {
-                string pattern = @"^\d{6}$";
-                return Regex.IsMatch(zipCode, pattern);
-            }
-
-            public static bool IsValidPhoneNumber(string phoneNumber)
-            {
-                string pattern = @"^\d{10}$";
-                return Regex.IsMatch(phoneNumber, pattern);
-            }
-        }
 
         static void Main(string[] args)
         {
@@ -339,87 +319,7 @@ namespace addressBooksystem
         }
     }
 
-    public static class Validator
-    {
-        public static bool IsValidEmail(string email)
-        {
-            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-            return Regex.IsMatch(email, pattern);
-        }
+    
 
-        public static bool IsValidZipCode(string zipCode)
-        {
-            string pattern = @"^\d{6}$";
-            return Regex.IsMatch(zipCode, pattern);
-        }
-
-        public static bool IsValidPhoneNumber(string phoneNumber)
-        {
-            string pattern = @"^\d{10}$";
-            return Regex.IsMatch(phoneNumber, pattern);
-        }
-    }
-
-    class ContactPerson
-    {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Address { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public string Zip { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Email { get; set; }
-
-        public void UpdateContact(ContactPerson updatedContact)
-        {
-            FirstName = updatedContact.FirstName;
-            LastName = updatedContact.LastName;
-            Address = updatedContact.Address;
-            City = updatedContact.City;
-            State = updatedContact.State;
-            Zip = updatedContact.Zip;
-            PhoneNumber = updatedContact.PhoneNumber;
-            Email = updatedContact.Email;
-        }
-    }
-
-    class AddressBook
-    {
-        private List<ContactPerson> contacts;
-
-        public AddressBook()
-        {
-            contacts = new List<ContactPerson>();
-        }
-
-        public void AddContact(ContactPerson contact)
-        {
-            contacts.Add(contact);
-        }
-
-        public void DisplayContact(ContactPerson contact)
-        {
-            Console.WriteLine($"Name: {contact.FirstName} {contact.LastName}");
-            Console.WriteLine($"Address: {contact.Address}, {contact.City}, {contact.State} {contact.Zip}");
-            Console.WriteLine($"Phone Number: {contact.PhoneNumber}");
-            Console.WriteLine($"Email: {contact.Email}");
-            Console.WriteLine();
-        }
-
-        public ContactPerson FindContact(string firstName, string lastName)
-        {
-            return contacts.Find(c =>
-                string.Equals(c.FirstName, firstName, StringComparison.OrdinalIgnoreCase) &&
-                string.Equals(c.LastName, lastName, StringComparison.OrdinalIgnoreCase));
-        }
-
-        public void DisplayAllContacts()
-        {
-            foreach (var contact in contacts)
-            {
-                DisplayContact(contact);
-            }
-        }
-    }
+    
 }
