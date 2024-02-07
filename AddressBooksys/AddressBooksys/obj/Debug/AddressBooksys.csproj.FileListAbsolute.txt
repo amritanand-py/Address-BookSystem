@@ -1,0 +1,7 @@
+D:\Github\Address-BookSystem\AddressBooksys\AddressBooksys\bin\Debug\AddressBooksys.exe.config
+D:\Github\Address-BookSystem\AddressBooksys\AddressBooksys\bin\Debug\AddressBooksys.exe
+D:\Github\Address-BookSystem\AddressBooksys\AddressBooksys\bin\Debug\AddressBooksys.pdb
+D:\Github\Address-BookSystem\AddressBooksys\AddressBooksys\obj\Debug\AddressBooksys.csproj.AssemblyReference.cache
+D:\Github\Address-BookSystem\AddressBooksys\AddressBooksys\obj\Debug\AddressBooksys.csproj.CoreCompileInputs.cache
+D:\Github\Address-BookSystem\AddressBooksys\AddressBooksys\obj\Debug\AddressBooksys.exe
+D:\Github\Address-BookSystem\AddressBooksys\AddressBooksys\obj\Debug\AddressBooksys.pdb
