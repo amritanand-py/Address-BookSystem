@@ -373,36 +373,14 @@ namespace addressBooksystem
             statePersonDictionary[contact.State].Add(contact);
         }
 
-        public void ViewPersonsByCity(string city)
+        public int GetContactCountByCity(string city)
         {
-            if (cityPersonDictionary.ContainsKey(city))
-            {
-                Console.WriteLine($"Persons in {city}:");
-                foreach (var person in cityPersonDictionary[city])
-                {
-                    Console.WriteLine($"{person.FirstName} {person.LastName}");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"No persons found in {city}.");
-            }
+            return cityPersonDictionary.ContainsKey(city) ? cityPersonDictionary[city].Count : 0;
         }
 
-        public void ViewPersonsByState(string state)
+        public int GetContactCountByState(string state)
         {
-            if (statePersonDictionary.ContainsKey(state))
-            {
-                Console.WriteLine($"Persons in {state}:");
-                foreach (var person in statePersonDictionary[state])
-                {
-                    Console.WriteLine($"{person.FirstName} {person.LastName}");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"No persons found in {state}.");
-            }
+            return statePersonDictionary.ContainsKey(state) ? statePersonDictionary[state].Count : 0;
         }
 
         public ContactPerson FindContact(string firstName, string lastName)
