@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
 namespace addressBooksystem
 {
     internal class Program
@@ -100,7 +99,7 @@ namespace addressBooksystem
                 while (!exitAddressBook)
                 {
                     DisplayAddressBookMenu(bookName);
-                    Console.Write($"Enter your choice for '{bookName}' Address Book (1-4): ");
+                    Console.Write($"Enter your choice for '{bookName}' Address Book (1-6): ");
                     string choice = Console.ReadLine();
 
                     switch (choice)
@@ -122,12 +121,22 @@ namespace addressBooksystem
                             break;
 
                         case "4":
+                            // Search for a person in a city
+                            SearchPersonInCity();
+                            break;
+
+                        case "5":
+                            // Search for a person in a state
+                            SearchPersonInState();
+                            break;
+
+                        case "6":
                             // Exit the address book menu
                             exitAddressBook = true;
                             break;
 
                         default:
-                            Console.WriteLine("Invalid choice. Please enter a valid option (1-4).");
+                            Console.WriteLine("Invalid choice. Please enter a valid option (1-6).");
                             break;
                     }
                 }
@@ -144,7 +153,9 @@ namespace addressBooksystem
             Console.WriteLine("1. Create a new contact");
             Console.WriteLine("2. Edit an existing contact");
             Console.WriteLine("3. Display all contacts");
-            Console.WriteLine("4. Exit");
+            Console.WriteLine("4. Search for a person in a city");
+            Console.WriteLine("5. Search for a person in a state");
+            Console.WriteLine("6. Exit");
         }
 
         public void DisplayAllAddressBooks()
@@ -239,6 +250,64 @@ namespace addressBooksystem
             }
         }
 
+        private void SearchPersonInCity()
+        {
+            Console.Write("Enter the city name to search for: ");
+            string city = Console.ReadLine();
+
+            List<ContactPerson> foundContacts = new List<ContactPerson>();
+
+            foreach (var addressBook in addressBooks.Values)
+            {
+                foundContacts.AddRange(addressBook.FindContactsInCity(city));
+            }
+
+            if (foundContacts.Count > 0)
+            {
+                Console.WriteLine($"Found {foundContacts.Count} person(s) in {city}:");
+                foreach (var contact in foundContacts)
+                {
+                    Console.WriteLine($"Name: {contact.FirstName} {contact.LastName}");
+                    Console.WriteLine($"Address: {contact.Address}, {contact.City}, {contact.State} {contact.Zip}");
+                    Console.WriteLine($"Phone Number: {contact.PhoneNumber}");
+                    Console.WriteLine($"Email: {contact.Email}\n");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"No person found in {city}.");
+            }
+        }
+
+        private void SearchPersonInState()
+        {
+            Console.Write("Enter the state name to search for: ");
+            string state = Console.ReadLine();
+
+            List<ContactPerson> foundContacts = new List<ContactPerson>();
+
+            foreach (var addressBook in addressBooks.Values)
+            {
+                foundContacts.AddRange(addressBook.FindContactsInState(state));
+            }
+
+            if (foundContacts.Count > 0)
+            {
+                Console.WriteLine($"Found {foundContacts.Count} person(s) in {state}:");
+                foreach (var contact in foundContacts)
+                {
+                    Console.WriteLine($"Name: {contact.FirstName} {contact.LastName}");
+                    Console.WriteLine($"Address: {contact.Address}, {contact.City}, {contact.State} {contact.Zip}");
+                    Console.WriteLine($"Phone Number: {contact.PhoneNumber}");
+                    Console.WriteLine($"Email: {contact.Email}\n");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"No person found in {state}.");
+            }
+        }
+
         private static void DisplayContact(ContactPerson contact)
         {
             Console.WriteLine($"Name: {contact.FirstName} {contact.LastName}");
@@ -283,27 +352,7 @@ namespace addressBooksystem
 
         public void AddContact(ContactPerson contact)
         {
-            if (!IsDuplicate(contact))
-            {
-                contacts.Add(contact);
-                Console.WriteLine("Contact Added Successfully!");
-            }
-            else
-            {
-                Console.WriteLine("Duplicate entry. Contact already exists.");
-            }
-        }
-
-        private bool IsDuplicate(ContactPerson contact)
-        {
-            foreach (var existingContact in contacts)
-            {
-                if (existingContact.Equals(contact))
-                {
-                    return true;
-                }
-            }
-            return false;
+            contacts.Add(contact);
         }
 
         public ContactPerson FindContact(string firstName, string lastName)
@@ -313,15 +362,18 @@ namespace addressBooksystem
                 string.Equals(c.LastName, lastName, StringComparison.OrdinalIgnoreCase));
         }
 
+        public List<ContactPerson> FindContactsInCity(string city)
+        {
+            return contacts.FindAll(c => string.Equals(c.City, city, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public List<ContactPerson> FindContactsInState(string state)
+        {
+            return contacts.FindAll(c => string.Equals(c.State, state, StringComparison.OrdinalIgnoreCase));
+        }
+
         public void DisplayAllContacts()
         {
-            if (contacts.Count == 0)
-            {
-                Console.WriteLine("No contacts found in the address book.");
-                return;
-            }
-
-            Console.WriteLine("All Contacts in Address Book:");
             foreach (var contact in contacts)
             {
                 Console.WriteLine($"Name: {contact.FirstName} {contact.LastName}");
@@ -332,5 +384,3 @@ namespace addressBooksystem
         }
     }
 }
-
-
