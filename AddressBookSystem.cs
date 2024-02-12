@@ -344,15 +344,65 @@ namespace addressBooksystem
     class AddressBook
     {
         private List<ContactPerson> contacts;
+        private Dictionary<string, List<ContactPerson>> cityPersonDictionary;
+        private Dictionary<string, List<ContactPerson>> statePersonDictionary;
 
         public AddressBook()
         {
             contacts = new List<ContactPerson>();
+            cityPersonDictionary = new Dictionary<string, List<ContactPerson>>();
+            statePersonDictionary = new Dictionary<string, List<ContactPerson>>();
         }
 
         public void AddContact(ContactPerson contact)
         {
             contacts.Add(contact);
+
+            // Update city-person dictionary
+            if (!cityPersonDictionary.ContainsKey(contact.City))
+            {
+                cityPersonDictionary[contact.City] = new List<ContactPerson>();
+            }
+            cityPersonDictionary[contact.City].Add(contact);
+
+            // Update state-person dictionary
+            if (!statePersonDictionary.ContainsKey(contact.State))
+            {
+                statePersonDictionary[contact.State] = new List<ContactPerson>();
+            }
+            statePersonDictionary[contact.State].Add(contact);
+        }
+
+        public void ViewPersonsByCity(string city)
+        {
+            if (cityPersonDictionary.ContainsKey(city))
+            {
+                Console.WriteLine($"Persons in {city}:");
+                foreach (var person in cityPersonDictionary[city])
+                {
+                    Console.WriteLine($"{person.FirstName} {person.LastName}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"No persons found in {city}.");
+            }
+        }
+
+        public void ViewPersonsByState(string state)
+        {
+            if (statePersonDictionary.ContainsKey(state))
+            {
+                Console.WriteLine($"Persons in {state}:");
+                foreach (var person in statePersonDictionary[state])
+                {
+                    Console.WriteLine($"{person.FirstName} {person.LastName}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"No persons found in {state}.");
+            }
         }
 
         public ContactPerson FindContact(string firstName, string lastName)
@@ -364,23 +414,28 @@ namespace addressBooksystem
 
         public List<ContactPerson> FindContactsInCity(string city)
         {
-            return contacts.FindAll(c => string.Equals(c.City, city, StringComparison.OrdinalIgnoreCase));
+            return cityPersonDictionary.ContainsKey(city) ? cityPersonDictionary[city] : new List<ContactPerson>();
         }
 
         public List<ContactPerson> FindContactsInState(string state)
         {
-            return contacts.FindAll(c => string.Equals(c.State, state, StringComparison.OrdinalIgnoreCase));
+            return statePersonDictionary.ContainsKey(state) ? statePersonDictionary[state] : new List<ContactPerson>();
         }
 
         public void DisplayAllContacts()
         {
             foreach (var contact in contacts)
             {
-                Console.WriteLine($"Name: {contact.FirstName} {contact.LastName}");
-                Console.WriteLine($"Address: {contact.Address}, {contact.City}, {contact.State} {contact.Zip}");
-                Console.WriteLine($"Phone Number: {contact.PhoneNumber}");
-                Console.WriteLine($"Email: {contact.Email}\n");
+                DisplayContact(contact);
             }
+        }
+
+        private void DisplayContact(ContactPerson contact)
+        {
+            Console.WriteLine($"Name: {contact.FirstName} {contact.LastName}");
+            Console.WriteLine($"Address: {contact.Address}, {contact.City}, {contact.State} {contact.Zip}");
+            Console.WriteLine($"Phone Number: {contact.PhoneNumber}");
+            Console.WriteLine($"Email: {contact.Email}\n");
         }
     }
 }
