@@ -116,7 +116,8 @@ namespace addressBooksystem
 
                         case "3":
                             // Display all contacts in the address book
-                            Console.WriteLine($"\nAll Contacts in '{bookName}' Address Book:");
+                            selectedAddressBook.SortContactsByName();
+                            Console.WriteLine($"\nAll Contacts in '{bookName}' Address Book (Sorted by Name):");
                             selectedAddressBook.DisplayAllContacts();
                             break;
 
@@ -414,6 +415,10 @@ namespace addressBooksystem
             Console.WriteLine($"Address: {contact.Address}, {contact.City}, {contact.State} {contact.Zip}");
             Console.WriteLine($"Phone Number: {contact.PhoneNumber}");
             Console.WriteLine($"Email: {contact.Email}\n");
+        }
+        public void SortContactsByName()
+        {
+            contacts.Sort((x, y) => string.Compare(x.FirstName + x.LastName, y.FirstName + y.LastName));
         }
     }
 }
