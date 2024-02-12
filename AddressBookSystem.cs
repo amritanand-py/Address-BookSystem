@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+
 
 namespace addressBooksystem
 {
@@ -15,33 +11,11 @@ namespace addressBooksystem
             Console.WriteLine("Welcome to Address Book System");
         }
 
-
-        public static class Validator
-{
-    public static bool IsValidEmail(string email)
-    {
-        string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-        return Regex.IsMatch(email, pattern);
-    }
-
-    public static bool IsValidZipCode(string zipCode)
-    {
-        string pattern = @"^\d{6}$";
-        return Regex.IsMatch(zipCode, pattern);
-    }
-
-    public static bool IsValidPhoneNumber(string phoneNumber)
-    {
-        string pattern = @"^\d{10}$";
-        return Regex.IsMatch(phoneNumber, pattern);
-    }
-}
-
         static void Main(string[] args)
         {
             Welcome();  // welcome note
 
-            Dictionary<string, AddressBook> addressBooks = new Dictionary<string, AddressBook>();
+            AddressBookSystem addressBookSystem = new AddressBookSystem(); // Initialize AddressBookSystem
 
             // Loop to show menu options
             bool exit = false;
@@ -55,17 +29,17 @@ namespace addressBooksystem
                 {
                     case "1":
                         // Add a new address book
-                        AddNewAddressBook(addressBooks);
+                        addressBookSystem.AddNewAddressBook();
                         break;
 
                     case "2":
                         // Operate on an existing address book
-                        OperateOnAddressBook(addressBooks);
+                        addressBookSystem.OperateOnAddressBook();
                         break;
 
                     case "3":
                         // Display all address books
-                        DisplayAllAddressBooks(addressBooks);
+                        addressBookSystem.DisplayAllAddressBooks();
                         break;
 
                     case "4":
@@ -91,8 +65,13 @@ namespace addressBooksystem
             Console.WriteLine("3. Display all address books");
             Console.WriteLine("4. Exit");
         }
+    }
 
-        private static void AddNewAddressBook(Dictionary<string, AddressBook> addressBooks)
+    class AddressBookSystem
+    {
+        private Dictionary<string, AddressBook> addressBooks = new Dictionary<string, AddressBook>();
+
+        public void AddNewAddressBook()
         {
             Console.Write("Enter the name of the new address book: ");
             string newBookName = Console.ReadLine();
@@ -109,7 +88,7 @@ namespace addressBooksystem
             }
         }
 
-        private static void OperateOnAddressBook(Dictionary<string, AddressBook> addressBooks)
+        public void OperateOnAddressBook()
         {
             Console.Write("Enter the name of the address book: ");
             string bookName = Console.ReadLine();
@@ -168,7 +147,7 @@ namespace addressBooksystem
             Console.WriteLine("4. Exit");
         }
 
-        private static void DisplayAllAddressBooks(Dictionary<string, AddressBook> addressBooks)
+        public void DisplayAllAddressBooks()
         {
             Console.WriteLine("\nAll Address Books:");
             foreach (var bookName in addressBooks.Keys)
@@ -186,14 +165,13 @@ namespace addressBooksystem
             addressBook.AddContact(newContact);
 
             Console.WriteLine("Contact Added:");
-            addressBook.DisplayContact(newContact);
+            DisplayContact(newContact); // Call DisplayContact method here
         }
 
         private static ContactPerson GetContactDetailsFromUser()
         {
             Console.Write("Enter First Name: ");
             string firstName = Console.ReadLine();
-
 
             Console.Write("Enter Last Name: ");
             string lastName = Console.ReadLine();
@@ -207,72 +185,14 @@ namespace addressBooksystem
             Console.Write("Enter State: ");
             string state = Console.ReadLine();
 
-            /*Console.Write("Enter Zip Code: ");
-            string zip = Console.ReadLine();
-            
-
-            Console.Write("Enter Phone Number: ");
-            string phoneNumber = Console.ReadLine();
-
-            Console.Write("Enter Email: ");
-            string email = Console.ReadLine();*/
-
-
             Console.Write("Enter Zip Code: ");
             string zip = Console.ReadLine();
 
-            // Validate zip code
-            if (!IsValidZipCode(zip))
-            {
-                Console.WriteLine("Invalid Zip Code format. Please enter a 6-digit Zip Code.");
-                return null;
-            }
-
             Console.Write("Enter Phone Number: ");
             string phoneNumber = Console.ReadLine();
 
-            // Validate phone number
-            if (!IsValidPhoneNumber(phoneNumber))
-            {
-                Console.WriteLine("Invalid Phone Number format. Please enter a 10-digit Phone Number.");
-                return null;
-            }
-
             Console.Write("Enter Email: ");
             string email = Console.ReadLine();
-
-            // Validate email
-            if (!IsValidEmail(email))
-            {
-                Console.WriteLine("Invalid Email format. Please enter a valid Email address.");
-                return null;
-            }
-
-
-            /*var zipcoderegex = new Regex(@"^[0-9]{6}");
-            var phoneNumberregex = new Regex(@"[89][0-9]{9}");
-            var emailregex = new Regex(@"^((\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*)\s*[;]{0,1}\s*)+$");
-            if (zipcoderegex.IsMatch(zip)&& emailregex.IsMatch(email)&& phoneNumberregex.IsMatch(phoneNumber))
-            {
-                return new ContactPerson
-                {
-                    FirstName = firstName,
-                    LastName = lastName,
-                    Address = address,
-                    City = city,
-                    State = state,
-                    Zip = zip,
-                    PhoneNumber = phoneNumber,
-                    Email = email
-                };
-
-            }
-            else{
-
-                Console.WriteLine("Error in either email/phn/zip");
-
-            }
-            return null;*/
 
             return new ContactPerson
             {
@@ -285,25 +205,6 @@ namespace addressBooksystem
                 PhoneNumber = phoneNumber,
                 Email = email
             };
-
-        }
-
-        static bool IsValidEmail(string email)
-        {
-            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-            return Regex.IsMatch(email, pattern);
-        }
-
-        static bool IsValidZipCode(string zipCode)
-        {
-            string pattern = @"^\d{6}$";
-            return Regex.IsMatch(zipCode, pattern);
-        }
-
-        static bool IsValidPhoneNumber(string phoneNumber)
-        {
-            string pattern = @"^\d{10}$";
-            return Regex.IsMatch(phoneNumber, pattern);
         }
 
         private static void EditExistingContact(AddressBook addressBook)
@@ -321,7 +222,7 @@ namespace addressBooksystem
             {
                 // Display existing contact details
                 Console.WriteLine("\nExisting Contact Details:");
-                addressBook.DisplayContact(existingContact);
+                DisplayContact(existingContact); // Call DisplayContact method here
 
                 // Get updated details from the user
                 ContactPerson updatedContact = GetContactDetailsFromUser();
@@ -330,33 +231,20 @@ namespace addressBooksystem
                 existingContact.UpdateContact(updatedContact);
 
                 Console.WriteLine("Contact Updated:");
-                addressBook.DisplayContact(existingContact);
+                DisplayContact(existingContact); // Call DisplayContact method here
             }
             else
             {
                 Console.WriteLine("Contact not found. Unable to edit.");
             }
         }
-    }
 
-    public static class Validator
-    {
-        public static bool IsValidEmail(string email)
+        private static void DisplayContact(ContactPerson contact)
         {
-            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-            return Regex.IsMatch(email, pattern);
-        }
-
-        public static bool IsValidZipCode(string zipCode)
-        {
-            string pattern = @"^\d{6}$";
-            return Regex.IsMatch(zipCode, pattern);
-        }
-
-        public static bool IsValidPhoneNumber(string phoneNumber)
-        {
-            string pattern = @"^\d{10}$";
-            return Regex.IsMatch(phoneNumber, pattern);
+            Console.WriteLine($"Name: {contact.FirstName} {contact.LastName}");
+            Console.WriteLine($"Address: {contact.Address}, {contact.City}, {contact.State} {contact.Zip}");
+            Console.WriteLine($"Phone Number: {contact.PhoneNumber}");
+            Console.WriteLine($"Email: {contact.Email}\n");
         }
     }
 
@@ -395,16 +283,27 @@ namespace addressBooksystem
 
         public void AddContact(ContactPerson contact)
         {
-            contacts.Add(contact);
+            if (!IsDuplicate(contact))
+            {
+                contacts.Add(contact);
+                Console.WriteLine("Contact Added Successfully!");
+            }
+            else
+            {
+                Console.WriteLine("Duplicate entry. Contact already exists.");
+            }
         }
 
-        public void DisplayContact(ContactPerson contact)
+        private bool IsDuplicate(ContactPerson contact)
         {
-            Console.WriteLine($"Name: {contact.FirstName} {contact.LastName}");
-            Console.WriteLine($"Address: {contact.Address}, {contact.City}, {contact.State} {contact.Zip}");
-            Console.WriteLine($"Phone Number: {contact.PhoneNumber}");
-            Console.WriteLine($"Email: {contact.Email}");
-            Console.WriteLine();
+            foreach (var existingContact in contacts)
+            {
+                if (existingContact.Equals(contact))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public ContactPerson FindContact(string firstName, string lastName)
@@ -416,10 +315,22 @@ namespace addressBooksystem
 
         public void DisplayAllContacts()
         {
+            if (contacts.Count == 0)
+            {
+                Console.WriteLine("No contacts found in the address book.");
+                return;
+            }
+
+            Console.WriteLine("All Contacts in Address Book:");
             foreach (var contact in contacts)
             {
-                DisplayContact(contact);
+                Console.WriteLine($"Name: {contact.FirstName} {contact.LastName}");
+                Console.WriteLine($"Address: {contact.Address}, {contact.City}, {contact.State} {contact.Zip}");
+                Console.WriteLine($"Phone Number: {contact.PhoneNumber}");
+                Console.WriteLine($"Email: {contact.Email}\n");
             }
         }
     }
 }
+
+
